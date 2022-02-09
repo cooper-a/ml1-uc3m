@@ -290,12 +290,184 @@ class BasicAgentAA(BustersAgent):
         self.printInfo(gameState)
         move = Directions.STOP
         legal = gameState.getLegalActions(0)  # Legal position from the pacman
-        move_random = random.randint(0, 3)
-        if (move_random == 0) and Directions.WEST in legal:  move = Directions.WEST
-        if (move_random == 1) and Directions.EAST in legal: move = Directions.EAST
-        if (move_random == 2) and Directions.NORTH in legal:   move = Directions.NORTH
-        if (move_random == 3) and Directions.SOUTH in legal: move = Directions.SOUTH
+
+
+        posX = gameState.getPacmanPosition()[0]
+        posY = gameState.getPacmanPosition()[1]
+        
+        posGhosts = gameState.getGhostPositions()
+        posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y = (posGhosts[0][0], posGhosts[0][1], posGhosts[1][0], posGhosts[1][1], posGhosts[2][0], posGhosts[2][1], posGhosts[3][0], posGhosts[3][1])
+
+        livGhosts = gameState.getLivingGhosts()
+        livGhost1, livGhost2, livGhost3, livGhost4 = (livGhosts[1], livGhosts[2], livGhosts[3], livGhosts[4])
+
+
+
+        ###Ghost eating code without wall detection###
+
+        # Checks status of ghosts
+        if (livGhost1 == 1 and livGhost2 == 1 and livGhost3 == 1 and livGhost4 == 1):
+            # Determines Pacman move depending on (x,y) position in relationg to ghost 1
+            if (posX > posGhost1X and Directions.WEST in legal):
+                    move = Directions.WEST
+            if (posX < posGhost1X and Directions.EAST in legal):
+                    move = Directions.EAST
+            if (posY < posGhost1Y and Directions.NORTH in legal):
+                    move = Directions.NORTH
+            if (posY > posGhost1Y and Directions.SOUTH in legal):
+                    move = Directions.SOUTH
+
+                    
+        # Repeated for all ghosts
+        if (livGhost1 == 0 and livGhost2 == 1 and livGhost3 == 1 and livGhost4 == 1):
+            if (posX > posGhost3X and Directions.WEST in legal):
+                    move = Directions.WEST
+            if (posX < posGhost3X and Directions.EAST in legal):
+                    move = Directions.EAST
+            if (posY < posGhost3Y and Directions.NORTH in legal):
+                    move = Directions.NORTH
+            if (posY > posGhost3Y and Directions.SOUTH in legal):
+                    move = Directions.SOUTH
+
+                    
+        if (livGhost1 == 0 and livGhost2 == 1 and livGhost3 == 0 and livGhost4 == 1):
+            if (posX > posGhost4X and Directions.WEST in legal):
+                    move = Directions.WEST
+            if (posX < posGhost4X and Directions.EAST in legal):
+                    move = Directions.EAST
+            if (posY < posGhost4Y and Directions.NORTH in legal):
+                    move = Directions.NORTH
+            if (posY > posGhost4Y and Directions.SOUTH in legal):
+                    move = Directions.SOUTH
+
+                    
+        if (livGhost1 == 0 and livGhost2 == 1 and livGhost3 == 0 and livGhost4 == 0):
+            if (posX > posGhost2X and Directions.WEST in legal):
+                    move = Directions.WEST
+            if (posX < posGhost2X and Directions.EAST in legal):
+                    move = Directions.EAST
+            if (posY < posGhost2Y and Directions.NORTH in legal):
+                    move = Directions.NORTH
+            if (posY > posGhost2Y and Directions.SOUTH in legal):
+                    move = Directions.SOUTH
+
+
+        ### With Wall detection###      
+##        # Checks status of ghosts
+##        if (livGhost1 == 1 and livGhost2 == 1 and livGhost3 == 1 and livGhost4 == 1):
+##            # Determines Pacman move depending on (x,y) position in relationg to ghost 1
+##            if (posX > posGhost1X and Directions.WEST in legal):
+##                if (gameState.getWalls()[posX-1][posY] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.WEST
+##            if (posX < posGhost1X and Directions.EAST in legal):
+##                if (gameState.getWalls()[posX+1][posY] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.EAST
+##            if (posY < posGhost1Y and Directions.NORTH in legal):
+##                if (gameState.getWalls()[posX][posY+1] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.NORTH
+##            if (posY > posGhost1Y and Directions.SOUTH in legal):
+##                if (gameState.getWalls()[posX][posY-1] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.SOUTH
+##
+##                    
+##        # Repeated for all ghosts
+##        if (livGhost1 == 0 and livGhost2 == 1 and livGhost3 == 1 and livGhost4 == 1):
+##            if (posX > posGhost2X and Directions.WEST in legal):
+##                if (gameState.getWalls()[posX-1][posY] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.WEST
+##            if (posX < posGhost2X and Directions.EAST in legal):
+##                if (gameState.getWalls()[posX+1][posY] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.EAST
+##            if (posY < posGhost2Y and Directions.NORTH in legal):
+##                if (gameState.getWalls()[posX][posY+1] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.NORTH
+##            if (posY > posGhost2Y and Directions.SOUTH in legal):
+##                if (gameState.getWalls()[posX][posY-1] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.SOUTH
+##
+##                    
+##        if (livGhost1 == 0 and livGhost2 == 0 and livGhost3 == 1 and livGhost4 == 1):
+##            if (posX > posGhost3X and Directions.WEST in legal):
+##                if (gameState.getWalls()[posX-1][posY] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.WEST
+##            if (posX < posGhost3X and Directions.EAST in legal):
+##                if (gameState.getWalls()[posX+1][posY] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.EAST
+##            if (posY < posGhost3Y and Directions.NORTH in legal):
+##                if (gameState.getWalls()[posX][posY+1] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.NORTH
+##            if (posY > posGhost3Y and Directions.SOUTH in legal):
+##                if (gameState.getWalls()[posX][posY-1] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.SOUTH
+##
+##                    
+##        if (livGhost1 == 0 and livGhost2 == 0 and livGhost3 == 0 and livGhost4 == 1):
+##            if (posX > posGhost4X and Directions.WEST in legal):
+##                if (gameState.getWalls()[posX-1][posY] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.WEST
+##            if (posX < posGhost4X and Directions.EAST in legal):
+##                if (gameState.getWalls()[posX+1][posY] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.EAST
+##            if (posY < posGhost4Y and Directions.NORTH in legal):
+##                if (gameState.getWalls()[posX][posY+1] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.NORTH
+##            if (posY > posGhost4Y and Directions.SOUTH in legal):
+##                if (gameState.getWalls()[posX][posY-1] == 'T'):
+##                    # Input Random Movement
+##                    pass
+##                else:
+##                    move = Directions.SOUTH
+
         return move
+
+
+
+
 
     def printLineData(self, gameState):
         # Retrieving Pacman's position
