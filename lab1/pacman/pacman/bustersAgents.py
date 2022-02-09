@@ -289,7 +289,21 @@ class BasicAgentAA(BustersAgent):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
         move = Directions.STOP
+
+        priority = {}
+        # finished_eating_food =
+
         legal = gameState.getLegalActions(0)  # Legal position from the pacman
+
+        food = gameState.getFood()
+        food_locations = []
+        for idx, foodRow in enumerate(food):
+            for idy, val in enumerate(foodRow):
+                if val:
+                    food_locations.append((idx, idy))
+
+
+
         move_random = random.randint(0, 3)
         if (move_random == 0) and Directions.WEST in legal:  move = Directions.WEST
         if (move_random == 1) and Directions.EAST in legal: move = Directions.EAST
@@ -331,11 +345,6 @@ class BasicAgentAA(BustersAgent):
         food = gameState.getFood()
 
         foodFlattened = str(food).replace("\n", "")
-        food_locations = []
-        for idx, foodRow in enumerate(food):
-            for idy, val in enumerate(foodRow):
-                if val:
-                    food_locations.append((idx, idy))
 
         score = gameState.getScore()
 
