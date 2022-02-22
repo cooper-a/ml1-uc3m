@@ -655,6 +655,50 @@ class Game(object):
                        "posGhost3Y,posGhost4X,posGhost4Y,legalNorth,legalSouth,legalEast,legalWest,legalStop,"
                        "livingGhost1,livingGhost2,livingGhost3,livingGhost4,foodFlattened,score\n")
 
+
+        fileName2 = "all_data_pacman.arff"
+        existsFile2 = os.path.exists(fileName2)
+        # Adding a header to the file
+        file2 = open(fileName2, "a")
+        if not existsFile2:
+            header = """@RELATION pacmandirection
+@ATTRIBUTE posPacmanX  NUMERIC
+@ATTRIBUTE posPacmanY   NUMERIC
+@ATTRIBUTE directionPacman  {North,South,West,East,Stop,None}
+@ATTRIBUTE directionGhost1  {North,South,West,East,Stop,None}
+@ATTRIBUTE directionGhost2  {North,South,West,East,Stop,None}
+@ATTRIBUTE directionGhost3  {North,South,West,East,Stop,None}
+@ATTRIBUTE directionGhost4  {North,South,West,East,Stop,None}
+@ATTRIBUTE distanceGhosts1   NUMERIC
+@ATTRIBUTE distanceGhosts2   NUMERIC
+@ATTRIBUTE distanceGhosts3   NUMERIC
+@ATTRIBUTE distanceGhosts4   NUMERIC
+@ATTRIBUTE walls_flattened   STRING
+@ATTRIBUTE wallDimensionsX   NUMERIC
+@ATTRIBUTE wallDimensionsY   NUMERIC
+@ATTRIBUTE posGhost1X   NUMERIC
+@ATTRIBUTE posGhost1Y   NUMERIC
+@ATTRIBUTE posGhost2X   NUMERIC
+@ATTRIBUTE posGhost2Y   NUMERIC
+@ATTRIBUTE posGhost3X   NUMERIC
+@ATTRIBUTE posGhost3Y   NUMERIC
+@ATTRIBUTE posGhost4X   NUMERIC
+@ATTRIBUTE posGhost4Y   NUMERIC
+@ATTRIBUTE legalNorth   {True,False}
+@ATTRIBUTE legalSouth   {True,False}
+@ATTRIBUTE legalEast   {True,False}
+@ATTRIBUTE legalWest   {True,False}
+@ATTRIBUTE legalStop   {True,False}
+@ATTRIBUTE livingGhost1   {True,False}
+@ATTRIBUTE livingGhost2   {True,False}
+@ATTRIBUTE livingGhost3   {True,False}
+@ATTRIBUTE livingGhost4   {True,False}
+@ATTRIBUTE foodFlattened   STRING
+@ATTRIBUTE score   NUMERIC
+
+@DATA\n"""
+            file2.write(header)
+
         while not self.gameOver:
             # Fetch the next agent
             agent = self.agents[agentIndex]
@@ -689,6 +733,13 @@ class Game(object):
             try:
                 if agentIndex == 0:
                     file.write(agent.printLineData(observation))
+            except:
+                pass
+
+            # Write to arff
+            try:
+                if agentIndex == 0:
+                    file2.write(agent.printLineData(observation))
             except:
                 pass
 
