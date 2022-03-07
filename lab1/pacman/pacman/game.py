@@ -664,7 +664,7 @@ class Game(object):
             header = """@RELATION pacmandirection
 @ATTRIBUTE posPacmanX  NUMERIC
 @ATTRIBUTE posPacmanY   NUMERIC
-@ATTRIBUTE directionPacman  {North,South,West,East,Stop,None}
+@ATTRIBUTE score   NUMERIC
 @ATTRIBUTE directionGhost1  {North,South,West,East,Stop,None}
 @ATTRIBUTE directionGhost2  {North,South,West,East,Stop,None}
 @ATTRIBUTE directionGhost3  {North,South,West,East,Stop,None}
@@ -673,9 +673,6 @@ class Game(object):
 @ATTRIBUTE distanceGhosts2   NUMERIC
 @ATTRIBUTE distanceGhosts3   NUMERIC
 @ATTRIBUTE distanceGhosts4   NUMERIC
-@ATTRIBUTE walls_flattened   STRING
-@ATTRIBUTE wallDimensionsX   NUMERIC
-@ATTRIBUTE wallDimensionsY   NUMERIC
 @ATTRIBUTE posGhost1X   NUMERIC
 @ATTRIBUTE posGhost1Y   NUMERIC
 @ATTRIBUTE posGhost2X   NUMERIC
@@ -693,8 +690,7 @@ class Game(object):
 @ATTRIBUTE livingGhost2   {True,False}
 @ATTRIBUTE livingGhost3   {True,False}
 @ATTRIBUTE livingGhost4   {True,False}
-@ATTRIBUTE foodFlattened   STRING
-@ATTRIBUTE score   NUMERIC
+@ATTRIBUTE directionPacman  {North,South,West,East,Stop,None}
 
 @DATA\n"""
             file2.write(header)
