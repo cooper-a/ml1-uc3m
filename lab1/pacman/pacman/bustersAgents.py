@@ -86,6 +86,7 @@ class BustersAgent(object):
         self.inferenceModules = [inferenceType(a) for a in ghostAgents]
         self.observeEnable = observeEnable
         self.elapseTimeEnable = elapseTimeEnable
+        self.score_storage = [0]
 
     def registerInitialState(self, gameState):
         "Initializes beliefs and inference modules"
@@ -421,12 +422,17 @@ class BasicAgentAA(BustersAgent):
         # Retrieving Ghost's distance
         distanceGhosts = gameState.data.ghostDistances
         distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4 = distanceGhosts
+        if not distanceGhosts1:
+            distanceGhosts1 = -1
+        if not distanceGhosts2:
+            distanceGhosts2 = -1
+        if not distanceGhosts3:
+            distanceGhosts3 = -1
+        if not distanceGhosts4:
+            distanceGhosts4 = -1
         # Retrieving Position of Walls
         walls = gameState.getWalls()
-        walls_flattened = str(walls).replace("\n", "")
         # concatenating all variables into single line
-        wallDimensionsX = walls.width
-        wallDimensionsY = walls.height
 
         posGhosts = gameState.getGhostPositions()
         posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y = (
@@ -442,20 +448,17 @@ class BasicAgentAA(BustersAgent):
 
         livingGhosts = gameState.getLivingGhosts()
         livingGhost1, livingGhost2, livingGhost3, livingGhost4 = livingGhosts[1:]
-        food = gameState.getFood()
-
-        foodFlattened = str(food).replace("\n", "")
 
         score = gameState.getScore()
 
-        csv_vals = [posX, posY, directionPacman, directionGhost1, directionGhost2, directionGhost3, directionGhost4,
-                    distanceGhosts1,
-                    directionGhost2, directionGhost3, directionGhost4, walls_flattened, wallDimensionsX,
-                    wallDimensionsY,
-                    posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y,
-                    legalNorth, legalSouth, legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3,
-                    livingGhost4,
-                    foodFlattened, score]
+        csv_vals = [posX, posY, score, directionGhost1, directionGhost2, directionGhost3, directionGhost4,
+                    distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, posGhost1X, posGhost1Y,
+                    posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth,
+                    legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3, livingGhost4,
+                    self.score_storage[-1], directionPacman]
+
+        self.score_storage.pop()
+        self.score_storage.append(score)
 
         line = ""
         for val in csv_vals:

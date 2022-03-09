@@ -34,6 +34,7 @@ class KeyboardAgent(Agent):
         self.lastMove = Directions.STOP
         self.index = index
         self.keys = []
+        self.score_storage = [0]
 
     def getAction( self, state):
         from graphicsUtils import keys_waiting
@@ -108,10 +109,13 @@ class KeyboardAgent(Agent):
         score = gameState.getScore()
 
         csv_vals = [posX, posY, score, directionGhost1, directionGhost2, directionGhost3, directionGhost4,
-                    distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4,
-                    posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y,
-                    legalNorth, legalSouth, legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3,
-                    livingGhost4, directionPacman]
+                    distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, posGhost1X, posGhost1Y,
+                    posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth,
+                    legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3, livingGhost4,
+                    self.score_storage[0], directionPacman]
+
+        self.score_storage.pop()
+        self.score_storage.append(score)
 
         line = ""
         for val in csv_vals:

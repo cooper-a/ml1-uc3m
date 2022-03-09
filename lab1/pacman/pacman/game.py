@@ -656,7 +656,7 @@ class Game(object):
                        "livingGhost1,livingGhost2,livingGhost3,livingGhost4,foodFlattened,score\n")
 
 
-        fileName2 = "all_data_pacman.arff"
+        fileName2 = "test_othermaps_tutorial1.arff"
         existsFile2 = os.path.exists(fileName2)
         # Adding a header to the file
         file2 = open(fileName2, "a")
@@ -690,6 +690,7 @@ class Game(object):
 @ATTRIBUTE livingGhost2   {True,False}
 @ATTRIBUTE livingGhost3   {True,False}
 @ATTRIBUTE livingGhost4   {True,False}
+@ATTRIBUTE previousScore   NUMERIC
 @ATTRIBUTE directionPacman  {North,South,West,East,Stop,None}
 
 @DATA\n"""
@@ -726,16 +727,17 @@ class Game(object):
                 observation = self.state.deepCopy()
 
             # Added to create and append to file
-            try:
-                if agentIndex == 0:
-                    file.write(agent.printLineData(observation))
-            except:
-                pass
+            # try:
+            #     if agentIndex == 0:
+            #         file.write(agent.printLineData(observation))
+            # except:
+            #     pass
 
             # Write to arff
             try:
                 if agentIndex == 0:
-                    file2.write(agent.printLineData(observation))
+                    line = agent.printLineData(observation)
+                    file2.write(line)
             except:
                 pass
 
