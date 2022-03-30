@@ -20,6 +20,7 @@ from game import Agent
 from game import Grid
 from game import Directions
 from keyboardAgents import KeyboardAgent
+from wekaI import Weka
 import inference
 import busters
 import os
@@ -87,6 +88,10 @@ class BustersAgent(object):
         self.observeEnable = observeEnable
         self.elapseTimeEnable = elapseTimeEnable
         self.score_storage = [0]
+        self.prev_tick = None
+        #COMMENTOUT
+        self.weka = Weka()
+        self.weka.start_jvm()
 
     def registerInitialState(self, gameState):
         "Initializes beliefs and inference modules"
@@ -118,6 +123,77 @@ class BustersAgent(object):
     def chooseAction(self, gameState):
         "By default, a BustersAgent just stops.  This should be overridden."
         return Directions.STOP
+
+    def printLineData(self, gameState, sendArray=False):
+        # Retrieving Pacman's position
+        posX = gameState.getPacmanPosition()[0]
+        posY = gameState.getPacmanPosition()[1]
+        # Retrieving Pacman's direction
+        directionPacman = gameState.data.agentStates[0].getDirection()
+        # Retrieving Ghost's direction
+        directionGhosts = [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)]
+        directionGhost1, directionGhost2, directionGhost3, directionGhost4 = directionGhosts
+        # Retrieving Ghost's distance
+        distanceGhosts = gameState.data.ghostDistances
+        distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4 = distanceGhosts
+        if not distanceGhosts1:
+            distanceGhosts1 = -1
+        if not distanceGhosts2:
+            distanceGhosts2 = -1
+        if not distanceGhosts3:
+            distanceGhosts3 = -1
+        if not distanceGhosts4:
+            distanceGhosts4 = -1
+        # Retrieving Position of Walls
+        walls = gameState.getWalls()
+        # concatenating all variables into single line
+
+        posGhosts = gameState.getGhostPositions()
+        posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y = (
+        posGhosts[0][0], posGhosts[0][1], posGhosts[1][0], posGhosts[1][1], posGhosts[2][0], posGhosts[2][1],
+        posGhosts[3][0], posGhosts[3][1])
+
+        actions = gameState.getLegalActions()
+        legalNorth = "North" in actions
+        legalSouth = "South" in actions
+        legalEast = "East" in actions
+        legalWest = "West" in actions
+        legalStop = "Stop" in actions
+
+        livingGhosts = gameState.getLivingGhosts()
+        livingGhost1, livingGhost2, livingGhost3, livingGhost4 = livingGhosts[1:]
+
+        score = gameState.getScore()
+
+        csv_vals = [posX, posY, score, directionGhost1, directionGhost2, directionGhost3, directionGhost4,
+                    distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, posGhost1X, posGhost1Y,
+                    posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth,
+                    legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3, livingGhost4,
+                    score, directionPacman]
+
+        if sendArray:
+            temp_vals = [posX, posY, score, directionGhost1, directionGhost2, directionGhost3, directionGhost4,
+                        distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, posGhost1X, posGhost1Y,
+                        posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth,
+                        legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3, livingGhost4, score]
+
+            for index, val in enumerate(temp_vals):
+                if type(val) == bool or val is None:
+                    temp_vals[index] = str(val)
+            return temp_vals
+
+        if not self.prev_tick:
+            self.prev_tick = csv_vals
+        else:
+            temp = self.prev_tick
+            self.prev_tick = csv_vals
+            temp[28] = score
+            line = ""
+            for val in temp:
+                line += str(val) + ","
+            return line + "\n"
+
+
 
 
 class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
@@ -224,6 +300,23 @@ class GreedyBustersAgent(BustersAgent):
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i + 1]]
         return Directions.EAST
+
+class MLAgent(BustersAgent):
+
+    def registerInitialState(self, gameState):
+        BustersAgent.registerInitialState(self, gameState)
+        self.distancer = Distancer(gameState.data.layout, False)
+
+    def chooseAction(self, gameState):
+        move = Directions.STOP
+        x = self.printLineData(gameState, sendArray=True)
+        wantMove = self.weka.predict("./training_tutorial1.model", x, "./training_tutorial1.arff")
+        legal = gameState.getLegalActions(0)  ##Legal position from the pacman
+        if wantMove in legal: move = wantMove
+        #
+        # if wantMove == Directions.STOP:
+        #     move = legal[1]
+        return move
 
 
 class BasicAgentAA(BustersAgent):
@@ -409,58 +502,3 @@ class BasicAgentAA(BustersAgent):
             else:
                 return self.convertToMove((posX, posY), self.path.pop(-1))
         return move
-
-    def printLineData(self, gameState):
-        # Retrieving Pacman's position
-        posX = gameState.getPacmanPosition()[0]
-        posY = gameState.getPacmanPosition()[1]
-        # Retrieving Pacman's direction
-        directionPacman = gameState.data.agentStates[0].getDirection()
-        # Retrieving Ghost's direction
-        directionGhosts = [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)]
-        directionGhost1, directionGhost2, directionGhost3, directionGhost4 = directionGhosts
-        # Retrieving Ghost's distance
-        distanceGhosts = gameState.data.ghostDistances
-        distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4 = distanceGhosts
-        if not distanceGhosts1:
-            distanceGhosts1 = -1
-        if not distanceGhosts2:
-            distanceGhosts2 = -1
-        if not distanceGhosts3:
-            distanceGhosts3 = -1
-        if not distanceGhosts4:
-            distanceGhosts4 = -1
-        # Retrieving Position of Walls
-        walls = gameState.getWalls()
-        # concatenating all variables into single line
-
-        posGhosts = gameState.getGhostPositions()
-        posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y = (
-        posGhosts[0][0], posGhosts[0][1], posGhosts[1][0], posGhosts[1][1], posGhosts[2][0], posGhosts[2][1],
-        posGhosts[3][0], posGhosts[3][1])
-
-        actions = gameState.getLegalActions()
-        legalNorth = "North" in actions
-        legalSouth = "South" in actions
-        legalEast = "East" in actions
-        legalWest = "West" in actions
-        legalStop = "Stop" in actions
-
-        livingGhosts = gameState.getLivingGhosts()
-        livingGhost1, livingGhost2, livingGhost3, livingGhost4 = livingGhosts[1:]
-
-        score = gameState.getScore()
-
-        csv_vals = [posX, posY, score, directionGhost1, directionGhost2, directionGhost3, directionGhost4,
-                    distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, posGhost1X, posGhost1Y,
-                    posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth,
-                    legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3, livingGhost4,
-                    self.score_storage[-1], directionPacman]
-
-        self.score_storage.pop()
-        self.score_storage.append(score)
-
-        line = ""
-        for val in csv_vals:
-            line += str(val) + ","
-        return line + "\n"

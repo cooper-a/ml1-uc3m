@@ -690,7 +690,7 @@ class Game(object):
 @ATTRIBUTE livingGhost2   {True,False}
 @ATTRIBUTE livingGhost3   {True,False}
 @ATTRIBUTE livingGhost4   {True,False}
-@ATTRIBUTE previousScore   NUMERIC
+@ATTRIBUTE futureScore   NUMERIC
 @ATTRIBUTE directionPacman  {North,South,West,East,Stop,None}
 
 @DATA\n"""
@@ -823,6 +823,7 @@ class Game(object):
                 boinc.set_fraction_done(self.getProgress())
 
         file.close()
+        file2.close()
         # inform a learning agent of the game result
         for agentIndex, agent in enumerate(self.agents):
             if "final" in dir(agent):
