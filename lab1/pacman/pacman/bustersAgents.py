@@ -172,10 +172,32 @@ class BustersAgent(object):
                     score, directionPacman]
 
         if sendArray:
-            temp_vals = [posX, posY, score, directionGhost1, directionGhost2, directionGhost3, directionGhost4,
+            subset2 = [posX, posY, score, directionGhost1, directionGhost2, directionGhost3, directionGhost4,
                         distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, posGhost1X, posGhost1Y,
                         posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth,
                         legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3, livingGhost4, score]
+
+            subset3 = [posX, posY, score, posGhost1X, posGhost1Y,
+                    posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth,
+                    legalEast, legalWest]
+
+            subset4 = [distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, legalNorth, legalSouth, legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3, livingGhost4]
+
+            subset5 = [distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, posGhost1X, posGhost1Y,
+                    posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y]
+
+            subset6 = [posX, posY, distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, legalNorth, legalSouth,
+                    legalEast, legalWest, legalStop]
+
+            subset7 = [distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, posGhost1X, posGhost1Y,
+                    posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth, legalEast, legalWest, legalStop]
+
+            reduced_keyboard_subset2 = [posX, posY, score, posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y]
+
+            best_model_attributes = [posX, posY, score, posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth, legalEast, legalWest, livingGhost1, livingGhost2, livingGhost3, livingGhost4]
+
+            # Modify the subset here for the automatic agent (MLAgent)
+            temp_vals = best_model_attributes
 
             for index, val in enumerate(temp_vals):
                 if type(val) == bool or val is None:
@@ -310,7 +332,8 @@ class MLAgent(BustersAgent):
     def chooseAction(self, gameState):
         move = Directions.STOP
         x = self.printLineData(gameState, sendArray=True)
-        wantMove = self.weka.predict("./training_tutorial1.model", x, "./training_tutorial1.arff")
+        # most are reduced_keyboard_subset2.arff
+        wantMove = self.weka.predict("./Best_Random_Forest.model", x, "./training_tutorial1_subset2.arff")
         legal = gameState.getLegalActions(0)  ##Legal position from the pacman
         if wantMove in legal: move = wantMove
         #

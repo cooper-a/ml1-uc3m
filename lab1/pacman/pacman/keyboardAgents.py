@@ -67,59 +67,59 @@ class KeyboardAgent(Agent):
         if   (self.SOUTH_KEY in self.keys or 'Down' in self.keys) and Directions.SOUTH in legal: move = Directions.SOUTH
         return move
 
-    def printLineData(self, gameState):
-        # Retrieving Pacman's position
-        posX = gameState.getPacmanPosition()[0]
-        posY = gameState.getPacmanPosition()[1]
-        # Retrieving Pacman's direction
-        directionPacman = gameState.data.agentStates[0].getDirection()
-        # Retrieving Ghost's direction
-        directionGhosts = [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)]
-        directionGhost1, directionGhost2, directionGhost3, directionGhost4 = directionGhosts
-        # Retrieving Ghost's distance
-        distanceGhosts = gameState.data.ghostDistances
-        distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4 = distanceGhosts
-        if not distanceGhosts1:
-            distanceGhosts1 = -1
-        if not distanceGhosts2:
-            distanceGhosts2 = -1
-        if not distanceGhosts3:
-            distanceGhosts3 = -1
-        if not distanceGhosts4:
-            distanceGhosts4 = -1
-        # Retrieving Position of Walls
-        walls = gameState.getWalls()
-        # concatenating all variables into single line
-
-        posGhosts = gameState.getGhostPositions()
-        posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y = (
-        posGhosts[0][0], posGhosts[0][1], posGhosts[1][0], posGhosts[1][1], posGhosts[2][0], posGhosts[2][1],
-        posGhosts[3][0], posGhosts[3][1])
-
-        actions = gameState.getLegalActions()
-        legalNorth = "North" in actions
-        legalSouth = "South" in actions
-        legalEast = "East" in actions
-        legalWest = "West" in actions
-        legalStop = "Stop" in actions
-
-        livingGhosts = gameState.getLivingGhosts()
-        livingGhost1, livingGhost2, livingGhost3, livingGhost4 = livingGhosts[1:]
-
-        score = gameState.getScore()
-
-        csv_vals = [posX, posY, score, directionGhost1, directionGhost2, directionGhost3, directionGhost4,
-                    distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, posGhost1X, posGhost1Y,
-                    posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth,
-                    legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3, livingGhost4,
-                    self.score_storage[0], directionPacman]
-
-        self.score_storage.pop()
-        self.score_storage.append(score)
-
-        line = ""
-        for val in csv_vals:
-            line += str(val) + ","
-        return line + "\n"
-
-        
+    # def printLineData(self, gameState):
+    #     # Retrieving Pacman's position
+    #     posX = gameState.getPacmanPosition()[0]
+    #     posY = gameState.getPacmanPosition()[1]
+    #     # Retrieving Pacman's direction
+    #     directionPacman = gameState.data.agentStates[0].getDirection()
+    #     # Retrieving Ghost's direction
+    #     directionGhosts = [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)]
+    #     directionGhost1, directionGhost2, directionGhost3, directionGhost4 = directionGhosts
+    #     # Retrieving Ghost's distance
+    #     distanceGhosts = gameState.data.ghostDistances
+    #     distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4 = distanceGhosts
+    #     if not distanceGhosts1:
+    #         distanceGhosts1 = -1
+    #     if not distanceGhosts2:
+    #         distanceGhosts2 = -1
+    #     if not distanceGhosts3:
+    #         distanceGhosts3 = -1
+    #     if not distanceGhosts4:
+    #         distanceGhosts4 = -1
+    #     # Retrieving Position of Walls
+    #     walls = gameState.getWalls()
+    #     # concatenating all variables into single line
+    #
+    #     posGhosts = gameState.getGhostPositions()
+    #     posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y = (
+    #     posGhosts[0][0], posGhosts[0][1], posGhosts[1][0], posGhosts[1][1], posGhosts[2][0], posGhosts[2][1],
+    #     posGhosts[3][0], posGhosts[3][1])
+    #
+    #     actions = gameState.getLegalActions()
+    #     legalNorth = "North" in actions
+    #     legalSouth = "South" in actions
+    #     legalEast = "East" in actions
+    #     legalWest = "West" in actions
+    #     legalStop = "Stop" in actions
+    #
+    #     livingGhosts = gameState.getLivingGhosts()
+    #     livingGhost1, livingGhost2, livingGhost3, livingGhost4 = livingGhosts[1:]
+    #
+    #     score = gameState.getScore()
+    #
+    #     csv_vals = [posX, posY, score, directionGhost1, directionGhost2, directionGhost3, directionGhost4,
+    #                 distanceGhosts1, distanceGhosts2, distanceGhosts3, distanceGhosts4, posGhost1X, posGhost1Y,
+    #                 posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y, legalNorth, legalSouth,
+    #                 legalEast, legalWest, legalStop, livingGhost1, livingGhost2, livingGhost3, livingGhost4,
+    #                 self.score_storage[0], directionPacman]
+    #
+    #     self.score_storage.pop()
+    #     self.score_storage.append(score)
+    #
+    #     line = ""
+    #     for val in csv_vals:
+    #         line += str(val) + ","
+    #     return line + "\n"
+    #
+    #

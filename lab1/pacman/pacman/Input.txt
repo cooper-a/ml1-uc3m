@@ -1,0 +1,1 @@
+csv_vals = [posX, posY, score, posGhost1X, posGhost1Y, posGhost2X, posGhost2Y, posGhost3X, posGhost3Y, posGhost4X, posGhost4Y,directionPacman]
